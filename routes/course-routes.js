@@ -56,12 +56,23 @@ router.post('/', asyncHandler(async (req, res) => {
 
 // A /api/courses/:id PUT route that will update the corresponding course and return a 204 HTTP status code and no content.
 router.put('/:id', asyncHandler(async (req, res) => {
-  let course = await Course.findByPk(req.params.id)
-  if (course) {
-    await course.update(req.body)
-    res.status(204).end()
-  } else {
-    res.status(404).json({ message: 'Cannot update. Course not found.' })
+  let course
+  try {
+    course = await Course.findByPk(req.params.id)
+    if (course) {
+      await course.update(req.body)
+      res.status(204).end()
+    } else {
+      res.sendStatus(404).json({ message: 'Cannot find course. Please try again with a valid course ID.'})
+    }
+  } catch (error) {
+    console.log('ERROR: ', error.name);
+    if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+      const errors = error.errors.map(err => err.message);
+      res.status(400).json({ errors });   
+    } else {
+      throw error;
+    }
   }
 }))
 

@@ -2,6 +2,8 @@
 const {
   Model
 } = require('sequelize');
+const bcrypt = require('bcrypt')
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -60,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     password: {
-      type: DataTypes.STRING,
+      type: DataTypes.VIRTUAL,
       allowNull: false,
       validate: {
         notNull: {
@@ -72,6 +74,21 @@ module.exports = (sequelize, DataTypes) => {
         len: {
           args: [8, 20],
           msg: 'The password should be between 8 and 20 characters in length.'
+        }
+      }
+    },
+    confirmedPassword: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      set(val) {
+        if (val === this.password) {
+          const hashedPassword = bcrypt.hashSync(val, 10)
+          this.setDataValue('confirmedPassword', hashedPassword)
+        }
+      },
+      validate: {
+        notNull: {
+          msg: 'Both passwords must match.'
         }
       }
     }
