@@ -1,23 +1,22 @@
 const auth = require('basic-auth')
 const bcrypt = require('bcrypt')
-const e = require('express')
 const db = require('../models/index')
 const { User } = db
 
-exports.authenticateuser = async (req, res, next) => {
+exports.authenticateUser = async (req, res, next) => {
   let message
   const credentials = auth(req)
 
   if (credentials) {
-    const user = await User.findOne({ where: {username: credentials.name}})
+    const user = await User.findOne({ where: {emailAddress: credentials.name}})
     if (user) {
       const authenticated = bcrypt
-        .compareSync(credentials.pass, user.confirmedPassword)
+        .compareSync(credentials.pass, user.password)
       if (authenticated) {
-        console.log(`Authentication successful for username: ${user.username}`)
+        console.log(`Authentication successful for username: ${user.emailAddress}`)
         req.currentUser = user
       } else {
-        message = `Authentication failed for username: ${user.username}`
+        message = `Authentication failed for username: ${user.emailAddress}`
       }
     } else {
       message = `User not found for username: ${credentials.name}`
