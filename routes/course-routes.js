@@ -23,7 +23,8 @@ router.get('/', asyncHandler(async (req, res) => {
     include: [
       {
         model: User,
-        as: 'User'
+        as: 'User',
+        attributes: ['id', 'firstName', 'lastName', 'emailAddress']
       }
     ]
   })
@@ -37,7 +38,8 @@ router.get('/:id', asyncHandler(async (req, res) => {
     include: [
       {
         model: User,
-        as: 'User'
+        as: 'User',
+        attributes: ['id', 'firstName', 'lastName', 'emailAddress']
       }
     ]
   })
