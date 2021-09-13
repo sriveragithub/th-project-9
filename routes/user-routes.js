@@ -34,7 +34,7 @@ router.post('/', asyncHandler(async (req, res) => {
     await User.create(req.body);
     res.status(201)
     res.setHeader('Location', '/')
-    res.json({ "message": "Account successfully created!" });
+    res.end()
   } catch (error) {
     console.log('ERROR: ', error.name);
 
